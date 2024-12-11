@@ -82,22 +82,29 @@ class Number:
         :param string:
         :return: True if the string can be a number, False otherwise
         """
-        return string.isdigit()
+        return string.isdigit() or Number.is_float(string)
+
     @staticmethod
     def is_integer(string):
         """
-        A method that determines if a number is an integer or a float
+        A method that determines if a number is an integer
         :param string: string representation of the number
         :return: True if the number is an integer and False otherwise
         """
+        return string.isdigit()
 
     @staticmethod
-    def get_integer(string):
-        """ A method that get a string representation of an integer and returns its value """
-
-    @staticmethod
-    def get_float(string):
-        """ A method that get a string representation of a float and returns its value """
+    def is_float(string):
+        """
+        A method that determines if a number is a float
+        :param string: string representation of the number
+        :return: True if the number is an float and False otherwise
+        """
+        try:
+            float(string)
+            return True
+        except ValueError:
+            return False
 
     @staticmethod
     def get_number(string):
@@ -105,4 +112,7 @@ class Number:
         A method that receives a string representation of a number and returns its value
         :param string: representation of a number
         """
-        return int(string)
+        if Number.is_integer(string):
+            return  int(string)
+        elif Number.is_float(string):
+            return float(string)
