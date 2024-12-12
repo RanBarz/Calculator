@@ -1,15 +1,22 @@
 from Number import Number
 from StateOfToken import StateOfToken
 from LegalTokens import LegalTokens
+from TreeMathExpressionEvaluator import OPERATORS
 from TreeNode import TreeNode
 
-PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, "~": 6, "!": 6}
+PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '_': 2.5}
+UNARY_OPERATOR = '!'
+TILDE = '~'
+MINUS = '-'
+UNARY_MINUS = '_'
 
 class TreeMathExpressionParser:
 
     @staticmethod
     def parse(expression):
         tokens = TreeMathExpressionParser.get_tokens(expression)
+        tokens = TreeMathExpressionParser.handle_unary_minus(tokens)
+        TreeMathExpressionParser.handle_minus_of_number(tokens)
         tree = TreeMathExpressionParser.make_tree(tokens)
         return tree
 
@@ -28,7 +35,8 @@ class TreeMathExpressionParser:
     @staticmethod
     def handle_legal_tokens(tokens):
         for index in range(len(tokens)):
-            if not tokens[index].isdigit() and not tokens[index] in PRECEDENCE:
+            if (not tokens[index].isdigit() and not tokens[index] in PRECEDENCE
+                    and not TreeMathExpressionParser.is_tilde(tokens[index])):
                 tokens[index] = LegalTokens(tokens[index])
         return tokens
 
@@ -38,10 +46,14 @@ class TreeMathExpressionParser:
         while index < len(tokens):
             sub_string = ""
             char = tokens[index]
-            while (not char in [token for token in LegalTokens] and
-                   (char.isdigit() or char == LegalTokens.FLOATING_POINT) and index < len(tokens)):
+            while (not char in [token for token in LegalTokens if token != LegalTokens.FLOATING_POINT] and
+                   (char == LegalTokens.FLOATING_POINT or char.isdigit()) and index < len(tokens)):
+                if char in [token for token in LegalTokens]:
+                    char = char.value
+                    tokens.remove(LegalTokens.FLOATING_POINT)
+                else:
+                    tokens.remove(char)
                 sub_string += char
-                tokens.remove(char)
                 if index != len(tokens):
                     char = tokens[index]
             if sub_string:
@@ -50,8 +62,57 @@ class TreeMathExpressionParser:
         return tokens
 
     @staticmethod
+    def handle_minus_of_number(tokens):
+        index = 1
+        while index < len(tokens):
+            index_to_delete = -1
+            previous_token = tokens[index - 1]
+            token = tokens[index]
+            if TreeMathExpressionParser.is_tilde(previous_token):
+                index_to_delete = index - 1
+                minus_counter = 1
+            else:
+                minus_counter = 0
+            while (TreeMathExpressionParser.is_tilde(token)
+                   or TreeMathExpressionParser.is_minus_part_of_number(token, previous_token)):
+                minus_counter += 1
+                previous_token = token
+                del tokens[index]
+                token = tokens[index]
+            if minus_counter % 2 != 0:
+                tokens[index] = OPERATORS[TILDE](tokens[index])
+            if index_to_delete != -1:
+                del tokens[index_to_delete]
+            index += 1
+
+    @staticmethod
+    def is_minus_part_of_number(token, previous_token):
+        return token == MINUS and (previous_token in PRECEDENCE or TreeMathExpressionParser.is_tilde(previous_token))
+
+    @staticmethod
+    def is_tilde(token):
+        return token == TILDE
+
+    @staticmethod
+    def handle_unary_minus(tokens):
+        index = 0
+        count = 0
+        while tokens[index] == MINUS:
+            count += 1
+            del tokens[index]
+        if count % 2 != 0:
+            tokens.insert(index, UNARY_MINUS)
+            tokens.insert(index, Number(0))
+        return tokens
+
+    @staticmethod
+    def is_unary(operator):
+        return operator == UNARY_OPERATOR
+
+    @staticmethod
     def make_tree(tokens):
         tree = TreeNode()
+        tree_father = None
         head = tree
         state = StateOfToken.FIRST_OPERAND
         after_parenthesis = False
@@ -83,15 +144,24 @@ class TreeMathExpressionParser:
                     return head
                 if tree.get_value() is None:
                     tree.set_value(token)
-                elif PRECEDENCE[tree.get_value()] > PRECEDENCE[token]:
+                elif (not TreeMathExpressionParser.is_unary(token) and
+                      PRECEDENCE[tree.get_value()] > PRECEDENCE[token]):
                     new_tree = TreeNode(token)
-                    new_tree.set_left(head)
+                    new_tree.set_left(tree)
                     tree = new_tree
-                    head = tree
+                    if tree_father is None:
+                        head = tree
+                    else:
+                        tree_father.set_right(tree)
                 else:
                     sub_tree = TreeNode(token)
                     sub_tree.set_left(tree.get_right())
                     tree.set_right(sub_tree)
-                    tree = sub_tree
-                state = StateOfToken.SECOND_OPERAND
+                    if not TreeMathExpressionParser.is_unary(token):
+                        tree_father = tree
+                        tree = sub_tree
+                if TreeMathExpressionParser.is_unary(token):
+                    state = StateOfToken.OPERATOR
+                else:
+                    state = StateOfToken.SECOND_OPERAND
         return head

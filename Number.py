@@ -66,14 +66,17 @@ class Number:
         return Number(-self.__number)
 
     @staticmethod
-    def factorial(self):
+    def factorial_for_int(number):
         """Returns the factorial of a number, handles edge cases and uses an iterative approach."""
-        if self.__number < 0:
+        if number < 0:
             raise ValueError("Factorial is not defined for negative numbers.")
-        if self.__number == 1 or self.__number == 0:
+        if number == 1 or number == 0:
             return 1
-        return self.__number * Number.factorial(self.__number - 1)
+        return number * Number.factorial_for_int(number - 1)
 
+    @staticmethod
+    def factorial(self):
+        return Number(Number.factorial_for_int(self.__number))
 
     @staticmethod
     def is_number(string):

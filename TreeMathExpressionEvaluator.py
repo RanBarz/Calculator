@@ -2,7 +2,8 @@ from Number import Number
 
 OPERATORS = {"+": Number.__add__, "-": Number.__sub__, "*": Number.__mul__, "/": Number.__truediv__, "^": Number.__pow__
     , "%": Number.__mod__, "@": Number.__matmul__, "$": Number.maximum, "&": Number.__and__
-    , "~": Number.__ne__, "!": Number.factorial}
+    , "~": Number.__invert__, "!": Number.factorial, '_':Number.__sub__}
+UNARY_OPERATOR = '!'
 
 
 class TreeMathExpressionEvaluator:
@@ -15,14 +16,20 @@ class TreeMathExpressionEvaluator:
         """
         left = expression_tree.get_left()
         right = expression_tree.get_right()
+        operator = expression_tree.get_value()
         if TreeMathExpressionEvaluator.is_operator(left.get_value()):
             left.set_value(TreeMathExpressionEvaluator.evaluate(left))
-        if TreeMathExpressionEvaluator.is_operator(right.get_value()):
+        if not TreeMathExpressionEvaluator.is_unary(operator) and TreeMathExpressionEvaluator.is_operator(right.get_value()):
             right.set_value(TreeMathExpressionEvaluator.evaluate(right))
         left_operand = left.get_value()
+        if TreeMathExpressionEvaluator.is_unary(operator):
+            return OPERATORS[operator](left_operand)
         right_operand = right.get_value()
-        operator = expression_tree.get_value()
         return OPERATORS[operator](left_operand, right_operand)
+
+    @staticmethod
+    def is_unary(operator):
+        return operator == UNARY_OPERATOR
 
     @staticmethod
     def is_operator(char):
