@@ -1,14 +1,7 @@
-from Number import Number
+from Number import *
 from StateOfToken import StateOfToken
 from LegalTokens import LegalTokens
-from TreeMathExpressionEvaluator import OPERATORS
 from TreeNode import TreeNode
-
-PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '_': 2.5}
-UNARY_OPERATOR = '!'
-TILDE = '~'
-MINUS = '-'
-UNARY_MINUS = '_'
 
 class TreeMathExpressionParser:
 
@@ -21,16 +14,16 @@ class TreeMathExpressionParser:
         return tree
 
     @staticmethod
-    def remove_white_spaces(tokens):
-        return tokens.replace(" ", "").replace("\t", "").replace("\n", "")
-
-    @staticmethod
     def get_tokens(expression):
         expression = TreeMathExpressionParser.remove_white_spaces(expression)
         tokens = list(expression)
         tokens = TreeMathExpressionParser.handle_legal_tokens(tokens)
         tokens = TreeMathExpressionParser.handle_numbers(tokens)
         return tokens
+
+    @staticmethod
+    def remove_white_spaces(expression):
+        return expression.replace(" ", "").replace("\t", "").replace("\n", "")
 
     @staticmethod
     def handle_legal_tokens(tokens):
@@ -80,7 +73,11 @@ class TreeMathExpressionParser:
                 del tokens[index]
                 token = tokens[index]
             if minus_counter % 2 != 0:
-                tokens[index] = OPERATORS[TILDE](tokens[index])
+                if tokens[index] in LegalTokens:
+                    tokens.insert(index + 1, Number(0))
+                    tokens.insert(index + 2, '-')
+                else:
+                    tokens[index] = OPERATORS[TILDE](tokens[index])
             if index_to_delete != -1:
                 del tokens[index_to_delete]
             index += 1
@@ -106,8 +103,8 @@ class TreeMathExpressionParser:
         return tokens
 
     @staticmethod
-    def is_unary(operator):
-        return operator == UNARY_OPERATOR
+    def is_right_unary(operator):
+        return operator in RIGHT_UNARY_OPERATORS
 
     @staticmethod
     def make_tree(tokens):
@@ -126,7 +123,13 @@ class TreeMathExpressionParser:
                if parenthesis_balance == 0:
                    after_parenthesis = False
             elif state == StateOfToken.FIRST_OPERAND:
-                left = TreeNode(token)
+                if token == LegalTokens.OPENING_PARENTHESIS:
+                    parenthesis_balance = 1
+                    index = tokens.index(LegalTokens.OPENING_PARENTHESIS)
+                    left = TreeMathExpressionParser.make_tree(tokens[index + 1:])
+                    after_parenthesis = True
+                else:
+                    left = TreeNode(token)
                 tree.set_left(left)
                 state = StateOfToken.OPERATOR
             elif state == StateOfToken.SECOND_OPERAND:
@@ -144,7 +147,7 @@ class TreeMathExpressionParser:
                     return head
                 if tree.get_value() is None:
                     tree.set_value(token)
-                elif (not TreeMathExpressionParser.is_unary(token) and
+                elif (not TreeMathExpressionParser.is_right_unary(token) and
                       PRECEDENCE[tree.get_value()] > PRECEDENCE[token]):
                     new_tree = TreeNode(token)
                     new_tree.set_left(tree)
@@ -157,10 +160,10 @@ class TreeMathExpressionParser:
                     sub_tree = TreeNode(token)
                     sub_tree.set_left(tree.get_right())
                     tree.set_right(sub_tree)
-                    if not TreeMathExpressionParser.is_unary(token):
+                    if not TreeMathExpressionParser.is_right_unary(token):
                         tree_father = tree
                         tree = sub_tree
-                if TreeMathExpressionParser.is_unary(token):
+                if TreeMathExpressionParser.is_right_unary(token):
                     state = StateOfToken.OPERATOR
                 else:
                     state = StateOfToken.SECOND_OPERAND

@@ -1,7 +1,19 @@
+PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '_': 2.5}
+UNARY_OPERATORS = ['!', '_', '~']
+BINARY_OPERATORS = ["+", "-", "*", "/", "^", "%", "@", "$", "&"]
+RIGHT_UNARY_OPERATORS = ['!', "#"]
+TILDE = '~'
+MINUS = '-'
+UNARY_MINUS = '_'
+
+
 class Number:
 
     def __init__(self, number):
         self.__number = number
+
+    def __str__(self):
+        return str(self.__number)
 
     @classmethod
     def from_string(cls, string_of_number):
@@ -101,7 +113,7 @@ class Number:
         """
         A method that determines if a number is a float
         :param string: string representation of the number
-        :return: True if the number is an float and False otherwise
+        :return: True if the number is a float and False otherwise
         """
         try:
             float(string)
@@ -119,3 +131,7 @@ class Number:
             return  int(string)
         elif Number.is_float(string):
             return float(string)
+
+OPERATORS = {"+": Number.__add__, "-": Number.__sub__, "*": Number.__mul__, "/": Number.__truediv__, "^": Number.__pow__
+    , "%": Number.__mod__, "@": Number.__matmul__, "$": Number.maximum, "&": Number.__and__
+    , "~": Number.__invert__, "!": Number.factorial, '_':Number.__sub__}
