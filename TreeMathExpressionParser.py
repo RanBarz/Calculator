@@ -94,12 +94,15 @@ class TreeMathExpressionParser:
     def handle_unary_minus(tokens):
         index = 0
         count = 0
-        while tokens[index] == MINUS:
-            count += 1
-            del tokens[index]
-        if count % 2 != 0:
-            tokens.insert(index, UNARY_MINUS)
-            tokens.insert(index, Number(0))
+        while index < len(tokens):
+            if index == 0 or tokens[index - 1] == LegalTokens.OPENING_PARENTHESIS:
+                while tokens[index] == MINUS:
+                    count += 1
+                    del tokens[index]
+                if count % 2 != 0:
+                    tokens.insert(index, UNARY_MINUS)
+                    tokens.insert(index, Number(0))
+            index += 1
         return tokens
 
     @staticmethod

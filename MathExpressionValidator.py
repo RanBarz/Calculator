@@ -9,13 +9,13 @@ class MathExpressionValidator:
         methods = [method for method in dir(MathExpressionValidator)
                    if callable(getattr(MathExpressionValidator, method)) and not method.startswith("__")
                    and not method == "validate"]
+        expression = TreeMathExpressionParser.remove_white_spaces(expression)
         for method in methods:
             rule = getattr(MathExpressionValidator, method)
             rule(expression)
 
     @staticmethod
     def not_empty(expression):
-        expression = TreeMathExpressionParser.remove_white_spaces(expression)
         if not expression:
             raise EmptyExpression()
 
@@ -31,6 +31,7 @@ class MathExpressionValidator:
     def use_of_operator(expression):
         index = 0
         tokens = TreeMathExpressionParser.get_tokens(expression)
+        TreeMathExpressionParser.handle_unary_minus(tokens)
         TreeMathExpressionParser.handle_minus_of_number(tokens)
         while index < len(tokens):
             token = tokens[index]
@@ -49,3 +50,10 @@ class MathExpressionValidator:
                      tokens[index - 1] != LegalTokens.CLOSING_PARENTHESIS):
                     raise IllegalUseOfOperator(token)
             index += 1
+
+    @staticmethod
+    def legal_numbers(expression):
+        tokens = TreeMathExpressionParser.get_tokens(expression)
+        for token in tokens:
+            if isinstance(token, Number) and token.get_value() is None:
+                raise TooManyPointsInFloat()

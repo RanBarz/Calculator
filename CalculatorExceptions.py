@@ -27,3 +27,9 @@ class IllegalUseOfOperator(Exception):
                     f"Please try again according to this rule.")
         return (f"The binary operator '{self.__character}' has to have an operand on each side of it.\n"
                 f"Please try again according to this rule.")
+
+class TooManyPointsInFloat(Exception):
+
+    def __str__(self):
+        return ("You entered a decimal number with more then one decimal point.\n"
+                "Please try again with a legal calculation.")

@@ -1,6 +1,8 @@
-PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '_': 2.5}
+from LegalTokens import LegalTokens
+
+PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '_': 2.5, '#': 6}
 UNARY_OPERATORS = ['!', '_', '~']
-BINARY_OPERATORS = ["+", "-", "*", "/", "^", "%", "@", "$", "&"]
+BINARY_OPERATORS = ["+", "-", "*", "/", "^", "%", "@", "$", "&", "_"]
 RIGHT_UNARY_OPERATORS = ['!', "#"]
 TILDE = '~'
 MINUS = '-'
@@ -26,7 +28,6 @@ class Number:
     def __mul__(self, other):
         """Returns the product of two numbers."""
         return Number(self.__number * other.get_value())
-
 
     @staticmethod
     def __truediv__(self, other):
@@ -91,6 +92,23 @@ class Number:
         return Number(Number.factorial_for_int(self.__number))
 
     @staticmethod
+    def count_decimal_digits(number):
+        number_str = str(number)
+        if LegalTokens.FLOATING_POINT.value in number_str:
+            return len(number_str.split('.')[1])
+        return 0
+
+    @staticmethod
+    def sum_digits(self):
+        sum_of_digits = 0
+        num = self.__number
+        num *= pow(10, Number.count_decimal_digits(num))
+        while num != 0:
+            sum_of_digits += num % 10
+            num //= 10
+        return Number(sum_of_digits)
+
+    @staticmethod
     def is_number(string):
         """
         A method that determines if a string represents a number
@@ -134,4 +152,4 @@ class Number:
 
 OPERATORS = {"+": Number.__add__, "-": Number.__sub__, "*": Number.__mul__, "/": Number.__truediv__, "^": Number.__pow__
     , "%": Number.__mod__, "@": Number.__matmul__, "$": Number.maximum, "&": Number.__and__
-    , "~": Number.__invert__, "!": Number.factorial, '_':Number.__sub__}
+    , "~": Number.__invert__, "!": Number.factorial, "_": Number.__sub__, "#": Number.sum_digits}
