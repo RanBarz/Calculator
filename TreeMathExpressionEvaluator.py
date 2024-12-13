@@ -10,11 +10,17 @@ class TreeMathExpressionEvaluator:
         :return: the method will return the value.
         """
         left = expression_tree.get_left()
+        if expression_tree.get_value() is None:
+            if left.get_left() is not None:
+                return TreeMathExpressionEvaluator.evaluate(left)
+            return left.get_value()
         right = expression_tree.get_right()
         operator = expression_tree.get_value()
         if TreeMathExpressionEvaluator.is_operator(left.get_value()):
             left.set_value(TreeMathExpressionEvaluator.evaluate(left))
-        if not TreeMathExpressionEvaluator.is_right_unary(operator) and TreeMathExpressionEvaluator.is_operator(right.get_value()):
+        if (not TreeMathExpressionEvaluator.is_right_unary(operator) and
+                (right.get_value() is None or
+                 TreeMathExpressionEvaluator.is_operator(right.get_value()))):
             right.set_value(TreeMathExpressionEvaluator.evaluate(right))
         left_operand = left.get_value()
         if TreeMathExpressionEvaluator.is_right_unary(operator):
