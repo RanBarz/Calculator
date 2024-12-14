@@ -1,3 +1,4 @@
+from CalculatorExceptions import IllegalUseOfFactorial
 from LegalTokens import LegalTokens
 
 PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '_': 2.5, '#': 6}
@@ -19,7 +20,7 @@ class Number:
 
     @classmethod
     def from_string(cls, string_of_number):
-         return cls(Number.get_number(string_of_number))
+        return cls(Number.get_number(string_of_number))
 
     def get_value(self):
         return self.__number
@@ -82,7 +83,7 @@ class Number:
     def factorial_for_int(number):
         """Returns the factorial of a number, handles edge cases and uses an iterative approach."""
         if number < 0:
-            raise ValueError("Factorial is not defined for negative numbers.")
+            raise IllegalUseOfFactorial()
         if number == 1 or number == 0:
             return 1
         return number * Number.factorial_for_int(number - 1)
@@ -146,10 +147,11 @@ class Number:
         :param string: representation of a number
         """
         if Number.is_integer(string):
-            return  int(string)
+            return int(string)
         elif Number.is_float(string):
             return float(string)
 
-OPERATORS = {"+": Number.__add__, "-": Number.__sub__, "*": Number.__mul__, "/": Number.__truediv__, "^": Number.__pow__
-    , "%": Number.__mod__, "@": Number.__matmul__, "$": Number.maximum, "&": Number.__and__
-    , "~": Number.__invert__, "!": Number.factorial, "_": Number.__sub__, "#": Number.sum_digits}
+
+OPERATORS = {"+": Number.__add__, "-": Number.__sub__, "*": Number.__mul__, "/": Number.__truediv__,
+             "^": Number.__pow__, "%": Number.__mod__, "@": Number.__matmul__, "$": Number.maximum, "&": Number.__and__,
+             "~": Number.__invert__, "!": Number.factorial, "_": Number.__sub__, "#": Number.sum_digits}

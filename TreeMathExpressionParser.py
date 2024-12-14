@@ -1,7 +1,9 @@
+from CalculatorExceptions import IllegalUseOfMinus, IllegalUseOfTilde
 from Number import *
 from StateOfToken import StateOfToken
 from LegalTokens import LegalTokens
 from TreeNode import TreeNode
+
 
 class TreeMathExpressionParser:
 
@@ -39,7 +41,7 @@ class TreeMathExpressionParser:
         while index < len(tokens):
             sub_string = ""
             char = tokens[index]
-            while (not char in [token for token in LegalTokens if token != LegalTokens.FLOATING_POINT] and
+            while (char not in [token for token in LegalTokens if token != LegalTokens.FLOATING_POINT] and
                    (char == LegalTokens.FLOATING_POINT or char.isdigit()) and index < len(tokens)):
                 if char in [token for token in LegalTokens]:
                     char = char.value
@@ -66,12 +68,17 @@ class TreeMathExpressionParser:
                 minus_counter = 1
             else:
                 minus_counter = 0
+            tilde_counter = 0
             while (TreeMathExpressionParser.is_tilde(token)
                    or TreeMathExpressionParser.is_minus_part_of_number(token, previous_token)):
+                if TreeMathExpressionParser.is_tilde(token):
+                    tilde_counter += 1
                 minus_counter += 1
                 previous_token = token
                 del tokens[index]
                 token = tokens[index]
+            if tilde_counter > 1:
+                raise IllegalUseOfTilde()
             if minus_counter % 2 != 0:
                 if tokens[index] in LegalTokens:
                     tokens.insert(index + 1, Number(0))
@@ -99,6 +106,10 @@ class TreeMathExpressionParser:
                 while tokens[index] == MINUS:
                     count += 1
                     del tokens[index]
+                if (count > 0 and
+                        not isinstance(tokens[index], Number) and
+                        not tokens[index] == LegalTokens.OPENING_PARENTHESIS):
+                    raise IllegalUseOfMinus()
                 if count % 2 != 0:
                     tokens.insert(index, UNARY_MINUS)
                     tokens.insert(index, Number(0))
@@ -119,12 +130,12 @@ class TreeMathExpressionParser:
         parenthesis_balance = 0
         for token in tokens:
             if after_parenthesis:
-               if token == LegalTokens.OPENING_PARENTHESIS:
-                   parenthesis_balance += 1
-               elif token == LegalTokens.CLOSING_PARENTHESIS:
-                   parenthesis_balance -= 1
-               if parenthesis_balance == 0:
-                   after_parenthesis = False
+                if token == LegalTokens.OPENING_PARENTHESIS:
+                    parenthesis_balance += 1
+                elif token == LegalTokens.CLOSING_PARENTHESIS:
+                    parenthesis_balance -= 1
+                if parenthesis_balance == 0:
+                    after_parenthesis = False
             elif state == StateOfToken.FIRST_OPERAND:
                 if token == LegalTokens.OPENING_PARENTHESIS:
                     parenthesis_balance = 1

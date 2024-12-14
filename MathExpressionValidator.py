@@ -3,6 +3,7 @@ from LegalTokens import LegalTokens
 from Number import OPERATORS, BINARY_OPERATORS, Number, UNARY_MINUS, RIGHT_UNARY_OPERATORS
 from TreeMathExpressionParser import TreeMathExpressionParser
 
+
 class MathExpressionValidator:
     @staticmethod
     def validate(expression):
@@ -22,8 +23,8 @@ class MathExpressionValidator:
     @staticmethod
     def legal_tokens(expression):
         for token in expression:
-            if (not token in [token.value for token in LegalTokens]
-                    and (not token in OPERATORS or token == UNARY_MINUS)
+            if (token not in [token.value for token in LegalTokens]
+                    and (token not in OPERATORS or token == UNARY_MINUS)
                     and not token.isdigit()):
                 raise IllegalCharacter(token)
 
@@ -47,8 +48,11 @@ class MathExpressionValidator:
                 if index - 1 < 0:
                     raise IllegalUseOfOperator(token)
                 if (not isinstance(tokens[index - 1], Number) and
-                     tokens[index - 1] != LegalTokens.CLOSING_PARENTHESIS):
+                        tokens[index - 1] != LegalTokens.CLOSING_PARENTHESIS):
                     raise IllegalUseOfOperator(token)
+                elif (isinstance(tokens[index - 1], Number) and
+                      Number.get_value(tokens[index - 1]) < 0):
+                    raise IllegalUseOfRightUnaryOperator(token)
             index += 1
 
     @staticmethod
@@ -57,3 +61,15 @@ class MathExpressionValidator:
         for token in tokens:
             if isinstance(token, Number) and token.get_value() is None:
                 raise TooManyPointsInFloat()
+
+    @staticmethod
+    def parenthesis_balance(expression):
+        tokens = TreeMathExpressionParser.get_tokens(expression)
+        parenthesis_balance = 0
+        for token in tokens:
+            if token == LegalTokens.OPENING_PARENTHESIS:
+                parenthesis_balance += 1
+            elif token == LegalTokens.CLOSING_PARENTHESIS:
+                parenthesis_balance -= 1
+        if parenthesis_balance != 0:
+            raise NoParenthesisBalance()
