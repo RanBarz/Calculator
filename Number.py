@@ -52,12 +52,10 @@ class Number:
     def __pow__(self, other):
         """Returns num1 raised to the power of num2."""
         float_number = float(self.__number)
-        if -1 < other.get_value < 1 and other.get_value() != 0 and float_number < 0:
+        if -1 < other.get_value() < 1 and other.get_value() != 0 and float_number < 0:
             raise RootOfNegative()
-        try:
-            return Number(pow(float_number, other.get_value()))
-        except Exception:
-            raise ResultIsTooLarge()
+        return Number(pow(float_number, other.get_value()))
+
 
     @staticmethod
     def __matmul__(self, other):

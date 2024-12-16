@@ -1,7 +1,7 @@
 from CalculatorExceptions import *
 from LegalTokens import LegalTokens
 from Number import OPERATORS, BINARY_OPERATORS, Number, UNARY_MINUS, RIGHT_UNARY_OPERATORS
-from TreeMathExpressionParser import TreeMathExpressionParser
+from MathExpressionParser import MathExpressionParser
 
 
 class MathExpressionValidator:
@@ -10,7 +10,7 @@ class MathExpressionValidator:
         methods = [method for method in dir(MathExpressionValidator)
                    if callable(getattr(MathExpressionValidator, method)) and not method.startswith("__")
                    and not method == "validate"]
-        expression = TreeMathExpressionParser.remove_white_spaces(expression)
+        expression = MathExpressionParser.remove_white_spaces(expression)
         for method in methods:
             rule = getattr(MathExpressionValidator, method)
             rule(expression)
@@ -31,9 +31,9 @@ class MathExpressionValidator:
     @staticmethod
     def use_of_operator(expression):
         index = 0
-        tokens = TreeMathExpressionParser.get_tokens(expression)
-        TreeMathExpressionParser.handle_unary_minus(tokens)
-        TreeMathExpressionParser.handle_minus_of_number(tokens)
+        tokens = MathExpressionParser.get_tokens(expression)
+        MathExpressionParser.handle_unary_minus(tokens)
+        MathExpressionParser.handle_minus_of_number(tokens)
         while index < len(tokens):
             token = tokens[index]
             if token in BINARY_OPERATORS:
@@ -59,14 +59,14 @@ class MathExpressionValidator:
 
     @staticmethod
     def z_legal_numbers(expression):
-        tokens = TreeMathExpressionParser.get_tokens(expression)
+        tokens = MathExpressionParser.get_tokens(expression)
         for token in tokens:
             if isinstance(token, Number) and token.get_value() is None:
                 raise TooManyPointsInFloat()
 
     @staticmethod
     def parenthesis_balance(expression):
-        tokens = TreeMathExpressionParser.get_tokens(expression)
+        tokens = MathExpressionParser.get_tokens(expression)
         parenthesis_balance = 0
         for token in tokens:
             if token == LegalTokens.OPENING_PARENTHESIS:
@@ -78,8 +78,10 @@ class MathExpressionValidator:
 
     @staticmethod
     def use_of_numbers(expression):
-        tokens = TreeMathExpressionParser.get_tokens(expression)
+        tokens = MathExpressionParser.get_tokens(expression)
+        tokens = MathExpressionParser.handle_unary_minus(tokens)
+        MathExpressionParser.handle_minus_of_number(tokens)
         for index in range(len(tokens)):
             if isinstance(tokens[index], Number) and index > 0:
-                if tokens[index - 1] != LegalTokens.OPENING_PARENTHESIS and tokens[index - 1] not in OPERATORS:
+                if tokens[index - 1] != LegalTokens.OPENING_PARENTHESIS and tokens[index - 1] not in BINARY_OPERATORS:
                     raise NoOperationOnNumber()

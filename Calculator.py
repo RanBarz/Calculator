@@ -1,6 +1,6 @@
 from MathExpressionValidator import MathExpressionValidator
-from TreeMathExpressionEvaluator import TreeMathExpressionEvaluator
-from TreeMathExpressionParser import TreeMathExpressionParser
+from MathExpressionEvaluator import MathExpressionEvaluator
+from MathExpressionParser import MathExpressionParser
 
 
 class Calculator:
@@ -8,6 +8,6 @@ class Calculator:
     @staticmethod
     def calculate(expression):
         MathExpressionValidator.validate(expression)
-        parsed_expression = TreeMathExpressionParser.parse(expression)
-        result = TreeMathExpressionEvaluator.evaluate(parsed_expression)
+        parsed_expression = MathExpressionParser.parse(expression)
+        result = MathExpressionEvaluator.evaluate(parsed_expression)
         return result

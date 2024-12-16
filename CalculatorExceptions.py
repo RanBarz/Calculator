@@ -55,7 +55,7 @@ class NoParenthesisBalance(Exception):
 
 class NoCalculation(Exception):
     def __str__(self):
-        return (f"This expression includes no calculation at all, or no calculation in parenthesis.\n"
+        return (f"This expression includes parenthesis with no calculation inside .\n"
                 "Please fix that and try again.")
 
 
