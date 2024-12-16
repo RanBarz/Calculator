@@ -76,3 +76,21 @@ class IllegalUseOfFactorial(Exception):
     def __str__(self):
         return (f"This expression uses factorial on a negative or non-integer number.\n"
                 f"Please try again, and use factorial only on positive integers.")
+
+
+class ResultIsTooLarge(Exception):
+    def __str__(self):
+        return ("This expression yields a number too large for this calculator.\n"
+                "Please try again with smaller numbers.")
+
+
+class RootOfNegative(Exception):
+    def __str__(self):
+        return ("This expression includes a root of a negative number, which isn't legal in this calculator.\n"
+                "Please try again with a legal expression.")
+
+
+class NoOperationOnNumber(Exception):
+    def __str__(self):
+        return ("This expression include a number that isn't operated on.\n"
+                "Please try again without this problem.")

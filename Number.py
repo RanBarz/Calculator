@@ -1,4 +1,4 @@
-from CalculatorExceptions import IllegalUseOfFactorial
+from CalculatorExceptions import IllegalUseOfFactorial, ResultIsTooLarge, RootOfNegative
 from LegalTokens import LegalTokens
 
 PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '_': 2.5, '#': 6}
@@ -34,7 +34,8 @@ class Number:
     def __truediv__(self, other):
         """Returns the division of two numbers, raises an error if dividing by zero."""
         if other.get_value() == 0:
-            raise ZeroDivisionError("Cannot divide by zero.")
+            raise ZeroDivisionError("This expression includes division by zero, which is illegal.\n"
+                                    "Please try again with a correct expression.")
         return Number(self.__number / other.get_value())
 
     @staticmethod
@@ -50,7 +51,13 @@ class Number:
     @staticmethod
     def __pow__(self, other):
         """Returns num1 raised to the power of num2."""
-        return Number(pow(self.__number, other.get_value()))
+        float_number = float(self.__number)
+        if -1 < other.get_value < 1 and other.get_value() != 0 and float_number < 0:
+            raise RootOfNegative()
+        try:
+            return Number(pow(float_number, other.get_value()))
+        except Exception:
+            raise ResultIsTooLarge()
 
     @staticmethod
     def __matmul__(self, other):
@@ -90,7 +97,10 @@ class Number:
 
     @staticmethod
     def factorial(self):
-        return Number(Number.factorial_for_int(self.__number))
+        try:
+            return Number(Number.factorial_for_int(self.__number))
+        except Exception:
+            raise ResultIsTooLarge()
 
     @staticmethod
     def count_decimal_digits(number):

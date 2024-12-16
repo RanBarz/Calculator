@@ -40,15 +40,17 @@ class MathExpressionValidator:
                 if index - 1 < 0 or index + 1 == len(tokens):
                     raise IllegalUseOfOperator(token)
                 if ((not isinstance(tokens[index - 1], Number) and
-                     tokens[index - 1] != LegalTokens.CLOSING_PARENTHESIS)
-                        or (not isinstance(tokens[index + 1], Number) and
-                            tokens[index + 1] != LegalTokens.OPENING_PARENTHESIS)):
+                        tokens[index - 1] != LegalTokens.CLOSING_PARENTHESIS and
+                        tokens[index - 1] not in RIGHT_UNARY_OPERATORS) or
+                        (not isinstance(tokens[index + 1], Number) and
+                         tokens[index + 1] != LegalTokens.OPENING_PARENTHESIS)):
                     raise IllegalUseOfOperator(token)
             elif token in RIGHT_UNARY_OPERATORS:
                 if index - 1 < 0:
                     raise IllegalUseOfOperator(token)
                 if (not isinstance(tokens[index - 1], Number) and
-                        tokens[index - 1] != LegalTokens.CLOSING_PARENTHESIS):
+                        tokens[index - 1] != LegalTokens.CLOSING_PARENTHESIS and
+                        tokens[index - 1] not in RIGHT_UNARY_OPERATORS):
                     raise IllegalUseOfOperator(token)
                 elif (isinstance(tokens[index - 1], Number) and
                       Number.get_value(tokens[index - 1]) < 0):
@@ -56,7 +58,7 @@ class MathExpressionValidator:
             index += 1
 
     @staticmethod
-    def legal_numbers(expression):
+    def z_legal_numbers(expression):
         tokens = TreeMathExpressionParser.get_tokens(expression)
         for token in tokens:
             if isinstance(token, Number) and token.get_value() is None:
@@ -73,3 +75,11 @@ class MathExpressionValidator:
                 parenthesis_balance -= 1
         if parenthesis_balance != 0:
             raise NoParenthesisBalance()
+
+    @staticmethod
+    def use_of_numbers(expression):
+        tokens = TreeMathExpressionParser.get_tokens(expression)
+        for index in range(len(tokens)):
+            if isinstance(tokens[index], Number) and index > 0:
+                if tokens[index - 1] != LegalTokens.OPENING_PARENTHESIS and tokens[index - 1] not in OPERATORS:
+                    raise NoOperationOnNumber()

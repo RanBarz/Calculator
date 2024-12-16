@@ -1,4 +1,4 @@
-from CalculatorExceptions import IllegalUseOfMinus, IllegalUseOfTilde
+from CalculatorExceptions import IllegalUseOfMinus, IllegalUseOfTilde, IllegalUseOfOperator
 from Number import *
 from StateOfToken import StateOfToken
 from LegalTokens import LegalTokens
@@ -69,16 +69,22 @@ class TreeMathExpressionParser:
             else:
                 minus_counter = 0
             tilde_counter = 0
-            while (TreeMathExpressionParser.is_tilde(token)
-                   or TreeMathExpressionParser.is_minus_part_of_number(token, previous_token)):
+            illegal = False
+            while (index < len(tokens) and (TreeMathExpressionParser.is_tilde(token)
+                   or TreeMathExpressionParser.is_minus_part_of_number(token, previous_token))):
                 if TreeMathExpressionParser.is_tilde(token):
                     tilde_counter += 1
                 minus_counter += 1
                 previous_token = token
                 del tokens[index]
-                token = tokens[index]
+                if index < len(tokens):
+                    token = tokens[index]
+                else:
+                    illegal = True
             if tilde_counter > 1:
                 raise IllegalUseOfTilde()
+            if illegal:
+                raise IllegalUseOfOperator(MINUS)
             if minus_counter % 2 != 0:
                 if tokens[index] in LegalTokens:
                     tokens.insert(index + 1, Number(0))
@@ -162,7 +168,9 @@ class TreeMathExpressionParser:
                 if tree.get_value() is None:
                     tree.set_value(token)
                 elif (not TreeMathExpressionParser.is_right_unary(token) and
-                      PRECEDENCE[tree.get_value()] > PRECEDENCE[token]):
+                        PRECEDENCE[tree.get_value()] > PRECEDENCE[token] or
+                        TreeMathExpressionParser.is_right_unary(token) and
+                        TreeMathExpressionParser.is_right_unary(tree.get_value())):
                     new_tree = TreeNode(token)
                     new_tree.set_left(tree)
                     tree = new_tree
