@@ -56,7 +56,6 @@ class Number:
             raise RootOfNegative()
         return Number(pow(float_number, other.get_value()))
 
-
     @staticmethod
     def __matmul__(self, other):
         """Returns the average of two numbers."""
