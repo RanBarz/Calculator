@@ -1,13 +1,14 @@
 from CalculatorExceptions import IllegalUseOfFactorial, ResultIsTooLarge, RootOfNegative
 from LegalTokens import LegalTokens
 
-PRECEDENCE = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '_': 2.5, '#': 6}
+PRECEDENCE = {'<': 0, "+": 1, "-": 1, "*": 2, "/": 2, '_': 2.5, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '#': 6}
 UNARY_OPERATORS = ['!', '_', '~']
-BINARY_OPERATORS = ["+", "-", "*", "/", "^", "%", "@", "$", "&", "_"]
+BINARY_OPERATORS = ["+", "-", "*", "/", "^", "%", "@", "$", "&", "_", "<"]
 RIGHT_UNARY_OPERATORS = ['!', "#"]
 TILDE = '~'
 MINUS = '-'
 UNARY_MINUS = '_'
+PART_OF_NUMBER_MINUS = '<'
 
 
 class Number:
@@ -55,7 +56,6 @@ class Number:
         if -1 < other.get_value() < 1 and other.get_value() != 0 and float_number < 0:
             raise RootOfNegative()
         return Number(pow(float_number, other.get_value()))
-
 
     @staticmethod
     def __matmul__(self, other):
@@ -162,4 +162,5 @@ class Number:
 
 OPERATORS = {"+": Number.__add__, "-": Number.__sub__, "*": Number.__mul__, "/": Number.__truediv__,
              "^": Number.__pow__, "%": Number.__mod__, "@": Number.__matmul__, "$": Number.maximum, "&": Number.__and__,
-             "~": Number.__invert__, "!": Number.factorial, "_": Number.__sub__, "#": Number.sum_digits}
+             "~": Number.__invert__, "!": Number.factorial, "_": Number.__sub__, "#": Number.sum_digits,
+             "<": Number.__sub__}

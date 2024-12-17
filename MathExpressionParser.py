@@ -82,23 +82,11 @@ class MathExpressionParser:
             if tilde_counter > 1:
                 raise IllegalUseOfTilde()
             if illegal:
-                raise IllegalUseOfOperator(MINUS)
+                raise IllegalUseOfOperator(token)
             if minus_counter % 2 != 0:
                 if tokens[index] == LegalTokens.OPENING_PARENTHESIS:
                     tokens.insert(index + 1, Number(0))
-                    tokens.insert(index + 2, '-')
-                    tokens.insert(index+3, LegalTokens.OPENING_PARENTHESIS)
-                    saved_index = index
-                    parenthesis_balance = 0
-                    while (parenthesis_balance != 0 or
-                            tokens[index] != LegalTokens.CLOSING_PARENTHESIS):
-                        if tokens == LegalTokens.OPENING_PARENTHESIS:
-                            parenthesis_balance += 1
-                        if tokens[index] == LegalTokens.CLOSING_PARENTHESIS:
-                            parenthesis_balance -= 1
-                        index += 1
-                    tokens.insert(index, LegalTokens.CLOSING_PARENTHESIS)
-                    index = saved_index
+                    tokens.insert(index + 2, PART_OF_NUMBER_MINUS)
                 else:
                     tokens[index] = OPERATORS[TILDE](tokens[index])
             if index_to_delete != -1:

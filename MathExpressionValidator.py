@@ -77,7 +77,7 @@ class MathExpressionValidator:
             raise NoParenthesisBalance()
 
     @staticmethod
-    def use_of_numbers(expression):
+    def z_use_of_numbers(expression):
         tokens = MathExpressionParser.get_tokens(expression)
         tokens = MathExpressionParser.handle_unary_minus(tokens)
         MathExpressionParser.handle_minus_of_number(tokens)
