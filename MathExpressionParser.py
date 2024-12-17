@@ -28,7 +28,7 @@ class MathExpressionParser:
     @staticmethod
     def handle_legal_tokens(tokens):
         for index in range(len(tokens)):
-            if (not tokens[index].isdigit() and not tokens[index] in PRECEDENCE
+            if (not tokens[index].isdigit() and not tokens[index] in OPERATORS
                     and not MathExpressionParser.is_tilde(tokens[index])):
                 tokens[index] = LegalTokens(tokens[index])
         return tokens
