@@ -1,4 +1,4 @@
-from CalculatorExceptions import IllegalUseOfFactorial, ResultIsTooLarge, RootOfNegative
+from CalculatorExceptions import IllegalUseOfFactorial, ResultIsTooLarge, RootOfNegative, TooLargeToSumDigits
 from LegalTokens import LegalTokens
 
 PRECEDENCE = {'<': 0, "+": 1, "-": 1, "*": 2, "/": 2, '_': 2.5, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '#': 6}
@@ -29,7 +29,10 @@ class Number:
     @staticmethod
     def __mul__(self, other):
         """Returns the product of two numbers."""
-        return Number(self.__number * other.get_value())
+        try:
+            return Number(self.__number * other.get_value())
+        except Exception:
+            raise ResultIsTooLarge()
 
     @staticmethod
     def __truediv__(self, other):
@@ -55,7 +58,10 @@ class Number:
         float_number = float(self.__number)
         if other.get_value() % 1 != 0 and float_number < 0:
             raise RootOfNegative()
-        return Number(pow(float_number, other.get_value()))
+        try:
+            return Number(pow(float_number, other.get_value()))
+        except Exception:
+            raise ResultIsTooLarge()
 
     @staticmethod
     def __matmul__(self, other):
@@ -111,7 +117,9 @@ class Number:
     def sum_digits(self):
         sum_of_digits = 0
         num = self.__number
-        num *= pow(10, Number.count_decimal_digits(num))
+        num *= pow(10.0, Number.count_decimal_digits(num))
+        if 'e' in str(num):
+            raise TooLargeToSumDigits()
         while num != 0:
             sum_of_digits += num % 10
             num //= 10

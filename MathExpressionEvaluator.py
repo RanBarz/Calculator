@@ -1,5 +1,5 @@
 from math import isinf
-from CalculatorExceptions import NoCalculation
+from CalculatorExceptions import NoCalculation, NoOperationOnNumber
 from Number import *
 
 
@@ -24,7 +24,9 @@ class MathExpressionEvaluator:
                         raise NoCalculation
                     result = OPERATORS[token](first_operand, second_operand)
                     if isinf(result.get_value()):
-                        raise Exception()
+                        raise ResultIsTooLarge()
                     numbers.append(result)
         final_result = numbers[0].get_value()
+        if len(numbers) > 1:
+            raise NoOperationOnNumber()
         return final_result
