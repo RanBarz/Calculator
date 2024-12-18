@@ -94,3 +94,9 @@ class NoOperationOnNumber(Exception):
     def __str__(self):
         return ("This expression include a number that isn't operated on.\n"
                 "Please try again without this problem.")
+
+
+class TooLargeToSumDigits(Exception):
+    def __str__(self):
+        return ("This expression uses the operator '#' on a number too long.\n"
+                "Please try again with a shorter number.")

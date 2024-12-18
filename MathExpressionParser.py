@@ -56,46 +56,45 @@ class MathExpressionParser:
 
     @staticmethod
     def handle_minus_of_number(tokens):
-        index = 1
+        previous_token = None
+        index = 0
         while index < len(tokens):
-            index_to_delete = -1
-            previous_token = tokens[index - 1]
             token = tokens[index]
-            if MathExpressionParser.is_tilde(previous_token):
-                index_to_delete = index - 1
-                minus_counter = 1
-            else:
-                minus_counter = 0
-            tilde_counter = 0
-            illegal = False
-            while (index < len(tokens) and (MathExpressionParser.is_tilde(token)
-                   or MathExpressionParser.is_minus_part_of_number(token, previous_token))):
-                if MathExpressionParser.is_tilde(token):
-                    tilde_counter += 1
+            minus_counter = 0
+            if index > 0:
+                previous_token = tokens[index - 1]
+            if token == TILDE:
+                minus_counter += 1
+                del tokens[index]
+                previous_token = TILDE
+                if index < len(tokens):
+                    token = tokens[index]
+                else:
+                    raise IllegalUseOfTilde()
+            while index < len(tokens) and MathExpressionParser.is_minus_part_of_number(token, previous_token):
                 minus_counter += 1
                 previous_token = token
                 del tokens[index]
                 if index < len(tokens):
                     token = tokens[index]
                 else:
-                    illegal = True
-            if tilde_counter > 1:
-                raise IllegalUseOfTilde()
-            if illegal:
-                raise IllegalUseOfOperator(token)
+                    raise IllegalUseOfMinus()
+            if (minus_counter > 0 and
+                    not isinstance(token, Number) and not token == LegalTokens.OPENING_PARENTHESIS):
+                if previous_token == TILDE:
+                    raise IllegalUseOfTilde()
+                raise IllegalUseOfMinus()
             if minus_counter % 2 != 0:
-                if tokens[index] == LegalTokens.OPENING_PARENTHESIS:
+                if token == LegalTokens.OPENING_PARENTHESIS:
                     tokens.insert(index + 1, Number(0))
                     tokens.insert(index + 2, PART_OF_NUMBER_MINUS)
                 else:
-                    tokens[index] = OPERATORS[TILDE](tokens[index])
-            if index_to_delete != -1:
-                del tokens[index_to_delete]
+                    tokens[index] = OPERATORS[TILDE](token)
             index += 1
 
     @staticmethod
     def is_minus_part_of_number(token, previous_token):
-        return token == MINUS and (previous_token in PRECEDENCE or MathExpressionParser.is_tilde(previous_token))
+        return token == MINUS and (previous_token in BINARY_OPERATORS or previous_token == TILDE)
 
     @staticmethod
     def is_tilde(token):
