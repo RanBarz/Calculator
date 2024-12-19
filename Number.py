@@ -21,9 +21,11 @@ class Number:
 
     @classmethod
     def from_string(cls, string_of_number):
+        """Makes instance of Number out of a string."""
         return cls(Number.get_number(string_of_number))
 
     def get_value(self):
+        """Returns the value of a Number"""
         return self.__number
 
     @staticmethod
@@ -93,21 +95,26 @@ class Number:
     @staticmethod
     def factorial_for_int(number):
         """Returns the factorial of a number, handles edge cases and uses an iterative approach."""
-        if number < 0:
+        if number < 0 or number % 1 != 0:
             raise IllegalUseOfFactorial()
+        number = int(number)
         if number == 1 or number == 0:
             return 1
         return number * Number.factorial_for_int(number - 1)
 
     @staticmethod
     def factorial(self):
+        """Tries using the factorial_for_int method."""
         try:
             return Number(Number.factorial_for_int(self.__number))
-        except Exception:
+        except Exception as e:
+            if isinstance(e, IllegalUseOfFactorial):
+                raise e
             raise ResultIsTooLarge()
 
     @staticmethod
     def count_decimal_digits(number):
+        """Counts how many decimal digits a number has."""
         number_str = str(number)
         if LegalTokens.FLOATING_POINT.value in number_str:
             return len(number_str.split('.')[1])
@@ -115,6 +122,7 @@ class Number:
 
     @staticmethod
     def sum_digits(self):
+        """Sums the digits of a number, including decimal numbers."""
         sum_of_digits = 0
         num = self.__number
         num *= pow(10.0, Number.count_decimal_digits(num))

@@ -7,6 +7,7 @@ class MathExpressionEvaluator:
 
     @staticmethod
     def evaluate(tokens):
+        """evaluates a mathematical expression given in postfix notation."""
         numbers = []
         for token in tokens:
             if isinstance(token, Number):

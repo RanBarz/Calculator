@@ -1,4 +1,4 @@
-from CalculatorExceptions import IllegalUseOfMinus, IllegalUseOfTilde, IllegalUseOfOperator
+from CalculatorExceptions import IllegalUseOfMinus, IllegalUseOfTilde
 from Number import *
 from LegalTokens import LegalTokens
 
@@ -7,6 +7,9 @@ class MathExpressionParser:
 
     @staticmethod
     def parse(expression):
+        """Parses a mathematical expression to postfix notation.
+           Including handling of minuses,
+           and turning numbers and other tokens to representative objects."""
         tokens = MathExpressionParser.get_tokens(expression)
         tokens = MathExpressionParser.handle_unary_minus(tokens)
         MathExpressionParser.handle_minus_of_number(tokens)
@@ -15,6 +18,8 @@ class MathExpressionParser:
 
     @staticmethod
     def get_tokens(expression):
+        """Makes tokens out of a mathematical expression.
+           Including handling of numbers and parenthesis."""
         expression = MathExpressionParser.remove_white_spaces(expression)
         tokens = list(expression)
         tokens = MathExpressionParser.handle_legal_tokens(tokens)
@@ -23,10 +28,13 @@ class MathExpressionParser:
 
     @staticmethod
     def remove_white_spaces(expression):
+        """Removes all types of white spaces from a string."""
         return expression.replace(" ", "").replace("\t", "").replace("\n", "")
 
     @staticmethod
     def handle_legal_tokens(tokens):
+        """Makes parenthesis and floating points into enum values.
+           For better readability of the code."""
         for index in range(len(tokens)):
             if (not tokens[index].isdigit() and not tokens[index] in OPERATORS
                     and not MathExpressionParser.is_tilde(tokens[index])):
@@ -35,6 +43,7 @@ class MathExpressionParser:
 
     @staticmethod
     def handle_numbers(tokens):
+        """Wraps numbers in objects, for better functionality and readability."""
         index = 0
         while index < len(tokens):
             sub_string = ""
@@ -56,6 +65,8 @@ class MathExpressionParser:
 
     @staticmethod
     def handle_minus_of_number(tokens):
+        """Makes minuses that should be part of the operand actually part of the number object,
+           and removes them from the tokens."""
         previous_token = None
         index = 0
         while index < len(tokens):
@@ -94,14 +105,17 @@ class MathExpressionParser:
 
     @staticmethod
     def is_minus_part_of_number(token, previous_token):
+        """Checks if a minus should be part of the operand after it."""
         return token == MINUS and (previous_token in BINARY_OPERATORS or previous_token == TILDE)
 
     @staticmethod
     def is_tilde(token):
+        """Checks if a token is tilde"""
         return token == TILDE
 
     @staticmethod
     def handle_unary_minus(tokens):
+        """Plants zero and then a special operator that represents the unary minus where needed."""
         index = 0
         while index < len(tokens):
             count = 0
@@ -121,10 +135,12 @@ class MathExpressionParser:
 
     @staticmethod
     def is_right_unary(operator):
+        """Checks if an operator is unary should be to the right of an operand."""
         return operator in RIGHT_UNARY_OPERATORS
 
     @staticmethod
     def should_push(operator, operators):
+        """Checks if an operator should be pushed the stack of operators."""
         if not operators:
             return True
         if operator == LegalTokens.OPENING_PARENTHESIS or operators[-1] == LegalTokens.OPENING_PARENTHESIS:
@@ -133,6 +149,8 @@ class MathExpressionParser:
 
     @staticmethod
     def make_postfix(tokens):
+        """Takes the tokens of an infix mathematical expression,
+           and return them in postfix notation."""
         postfix = []
         operators = []
         for token in tokens:

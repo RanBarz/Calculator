@@ -9,13 +9,15 @@ CALCULATOR_GUIDE = ("Calculator guide: this calculator is advanced,\n"
                     "'#' - sum of digits. example: 123# = 6\n")
 MENU_MESSAGE = ("exit - enter 'exit' to end the program\n"
                 "use - enter anything else to use the calculator\n")
-GET_EXPRESSION_MESSAGE = "Enter your calculation (enter 'exit' to return to the menu): "
+GET_EXPRESSION_MESSAGE = ("Enter your calculation (enter 'exit' to return to the menu, \n"
+                          "enter 'help' to open the guide): ")
 
 
 class UserInterface:
 
     @staticmethod
     def open_menu():
+        """Opens the main menu for the calculator."""
         input_value = input("Welcome to the Omega Calculator.\n" + MENU_MESSAGE)
         while input_value != "exit":
             UserInterface.get_expressions()
@@ -24,12 +26,16 @@ class UserInterface:
 
     @staticmethod
     def get_expressions():
+        """Allows the user to enter mathematical expressions."""
         print("\n" + CALCULATOR_GUIDE)
         expression = input(GET_EXPRESSION_MESSAGE)
         while expression != "exit":
-            try:
-                result = Calculator.calculate(expression)
-                print(f"The result is: {result}\n")
-            except Exception as e:
-                print(str(e) + "\n")
+            if expression == "help":
+                print("\n" + CALCULATOR_GUIDE)
+            else:
+                try:
+                    result = Calculator.calculate(expression)
+                    print(f"The result is: {result}\n")
+                except Exception as e:
+                    print(str(e) + "\n")
             expression = input(GET_EXPRESSION_MESSAGE)

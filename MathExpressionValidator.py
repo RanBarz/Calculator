@@ -7,6 +7,7 @@ from MathExpressionParser import MathExpressionParser
 class MathExpressionValidator:
     @staticmethod
     def validate(expression):
+        """Uses all the validation methods on a mathematical expression."""
         methods = [method for method in dir(MathExpressionValidator)
                    if callable(getattr(MathExpressionValidator, method)) and not method.startswith("__")
                    and not method == "validate"]
@@ -17,11 +18,13 @@ class MathExpressionValidator:
 
     @staticmethod
     def not_empty(expression):
+        """Checks if the expression is empty, and if so raises a custom exception."""
         if not expression:
             raise EmptyExpression()
 
     @staticmethod
     def legal_tokens(expression):
+        """Makes sure all the tokens in an expression are legal."""
         for token in expression:
             if (token not in [token.value for token in LegalTokens]
                     and (token not in OPERATORS or token == UNARY_MINUS)
@@ -30,6 +33,7 @@ class MathExpressionValidator:
 
     @staticmethod
     def use_of_operator(expression):
+        """Makes sure all operators in an expression are used correctly."""
         index = 0
         tokens = MathExpressionParser.get_tokens(expression)
         MathExpressionParser.handle_unary_minus(tokens)
@@ -59,6 +63,7 @@ class MathExpressionValidator:
 
     @staticmethod
     def z_legal_numbers(expression):
+        """Makes sure all numbers in an expression are legal."""
         tokens = MathExpressionParser.get_tokens(expression)
         for token in tokens:
             if isinstance(token, Number) and token.get_value() is None:
@@ -66,6 +71,7 @@ class MathExpressionValidator:
 
     @staticmethod
     def parenthesis_balance(expression):
+        """Makes sure there is a balance between opening and closing parenthesis."""
         tokens = MathExpressionParser.get_tokens(expression)
         parenthesis_balance = 0
         for token in tokens:
@@ -78,6 +84,7 @@ class MathExpressionValidator:
 
     @staticmethod
     def z_use_of_numbers(expression):
+        """makes sure all numbers are operated on."""
         tokens = MathExpressionParser.get_tokens(expression)
         tokens = MathExpressionParser.handle_unary_minus(tokens)
         MathExpressionParser.handle_minus_of_number(tokens)
