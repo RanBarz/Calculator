@@ -1,15 +1,19 @@
-from CalculatorExceptions import *
-from LegalTokens import LegalTokens
-from Number import OPERATORS, BINARY_OPERATORS, Number, UNARY_MINUS, RIGHT_UNARY_OPERATORS
-from MathExpressionParser import MathExpressionParser
+"""A module for that include the validator class,
+of math expressions."""
+from calculator_exceptions import *
+from legal_tokens import LegalTokens
+from number import OPERATORS, BINARY_OPERATORS, Number, UNARY_MINUS, RIGHT_UNARY_OPERATORS
+from math_expression_parser import MathExpressionParser
 
 
 class MathExpressionValidator:
+    """The class that makes sure a math expression is legal."""
     @staticmethod
     def validate(expression):
         """Uses all the validation methods on a mathematical expression."""
         methods = [method for method in dir(MathExpressionValidator)
-                   if callable(getattr(MathExpressionValidator, method)) and not method.startswith("__")
+                   if callable(getattr(MathExpressionValidator, method)) and
+                   not method.startswith("__")
                    and not method == "validate"]
         expression = MathExpressionParser.remove_white_spaces(expression)
         for method in methods:
