@@ -1,4 +1,5 @@
-from Calculator import Calculator
+"""A module with the user interface class and needed constants."""
+from calculator import Calculator
 
 CALCULATOR_GUIDE = ("Calculator guide: this calculator is advanced,\n"
                     "therefore it has the regular operators and a few special ones.\n"
@@ -14,7 +15,7 @@ GET_EXPRESSION_MESSAGE = ("Enter your calculation (enter 'exit' to return to the
 
 
 class UserInterface:
-
+    """The user interface class that works with the Calculator class."""
     @staticmethod
     def open_menu():
         """Opens the main menu for the calculator."""
