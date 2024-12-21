@@ -1,10 +1,15 @@
-from CalculatorExceptions import IllegalUseOfMinus, IllegalUseOfTilde
-from Number import *
-from LegalTokens import LegalTokens
+"""A module that includes the parser class,
+ for math expression into postfix notation."""
+from calculator_exceptions import IllegalUseOfMinus, IllegalUseOfTilde
+from number import (Number, OPERATORS, TILDE,
+                    PART_OF_NUMBER_MINUS, BINARY_OPERATORS, MINUS, UNARY_MINUS,
+                    RIGHT_UNARY_OPERATORS, PRECEDENCE)
+from legal_tokens import LegalTokens
 
 
 class MathExpressionParser:
-
+    """The parser class,
+     that includes all methods to parse a complex math expression."""
     @staticmethod
     def parse(expression):
         """Parses a mathematical expression to postfix notation.
@@ -48,7 +53,8 @@ class MathExpressionParser:
         while index < len(tokens):
             sub_string = ""
             char = tokens[index]
-            while (char not in [token for token in LegalTokens if token != LegalTokens.FLOATING_POINT] and
+            while (char not in
+                   [token for token in LegalTokens if token != LegalTokens.FLOATING_POINT] and
                    (char == LegalTokens.FLOATING_POINT or char.isdigit()) and index < len(tokens)):
                 if char in [token for token in LegalTokens]:
                     char = char.value
@@ -82,7 +88,8 @@ class MathExpressionParser:
                     token = tokens[index]
                 else:
                     raise IllegalUseOfTilde()
-            while index < len(tokens) and MathExpressionParser.is_minus_part_of_number(token, previous_token):
+            while (index < len(tokens) and
+                   MathExpressionParser.is_minus_part_of_number(token, previous_token)):
                 minus_counter += 1
                 previous_token = token
                 del tokens[index]
@@ -143,7 +150,7 @@ class MathExpressionParser:
         """Checks if an operator should be pushed the stack of operators."""
         if not operators:
             return True
-        if operator == LegalTokens.OPENING_PARENTHESIS or operators[-1] == LegalTokens.OPENING_PARENTHESIS:
+        if LegalTokens.OPENING_PARENTHESIS in (operator, operators[-1]):
             return True
         return PRECEDENCE[operator] > PRECEDENCE[operators[-1]]
 
