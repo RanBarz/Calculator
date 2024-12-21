@@ -1,10 +1,12 @@
-from MathExpressionValidator import MathExpressionValidator
-from MathExpressionEvaluator import MathExpressionEvaluator
-from MathExpressionParser import MathExpressionParser
+"""This module has the Calculator class."""
+from math_expression_validator import MathExpressionValidator
+from math_expression_evaluator import MathExpressionEvaluator
+from math_expression_parser import MathExpressionParser
 
 
 class Calculator:
-
+    """This class represents a calculator,
+    including its only functionality: calculating an expression."""
     @staticmethod
     def calculate(expression):
         """Validates, parses, and evaluates the given mathematical expression."""
