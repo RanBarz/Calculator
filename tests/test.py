@@ -1,11 +1,47 @@
 """A module with all the testing functions needed."""
 from calculator import Calculator
+import pytest
+from calculator_exceptions import IllegalCharacter, IllegalUseOfOperator, EmptyExpression
 
 
 def evaluate(expression):
     """Simulates the advanced calculator by evaluating the expression.
     Replace this with your actual calculator function."""
     return Calculator.calculate(expression)
+
+
+def test_gibberish():
+    with pytest.raises(Exception) as exception_type:
+        evaluate("sdsfgsdfg")
+    assert exception_type.type == IllegalCharacter
+
+
+def test_simple_syntax_errors():
+    with pytest.raises(Exception) as exception_type:
+        evaluate("5+^2")
+    assert exception_type.type == IllegalUseOfOperator
+    with pytest.raises(Exception) as exception_type:
+        evaluate("5+2-3**6")
+    assert exception_type.type == IllegalUseOfOperator
+    with pytest.raises(Exception) as exception_type:
+        evaluate("5+/+2")
+    assert exception_type.type == IllegalUseOfOperator
+    with pytest.raises(Exception) as exception_type:
+        evaluate("5+$2")
+    assert exception_type.type == IllegalUseOfOperator
+    with pytest.raises(Exception) as exception_type:
+        evaluate("5&&^2")
+    assert exception_type.type == IllegalUseOfOperator
+
+
+def test_empty_expression():
+    with pytest.raises(Exception) as exception_type:
+        evaluate("")
+    assert exception_type.type == EmptyExpression
+    with pytest.raises(Exception) as exception_type:
+        evaluate("              "
+                 " ")
+    assert exception_type.type == EmptyExpression
 
 
 def test_regular_operators():
@@ -78,16 +114,18 @@ def test_combined_operators():
     assert evaluate("(123#)-(10$5)") == -4
 
     # Complex expressions
-    assert evaluate("((10@20)$15)&(~(-5))") == 5
-    assert evaluate("((456#)+(123#))@10") == 15.5
+    assert evaluate("(( 1 0@20) $15)&(~ (-5))") == 5
+    assert evaluate("( (45 6#)+ ("
+                    "123#))@10") == 15.5
 
 
 def test_precedence_handling():
     # Operators precedence testing
-    assert evaluate("2+3*4") == 14  # '*' has higher precedence than '+'
-    assert evaluate("2*(3+4)") == 14  # Parentheses alter precedence
+    assert evaluate("2 + 3 * 4") == 14  # '*' has higher precedence than '+'
+    assert evaluate("2*( 3      "
+                    "+4)") == 14  # Parentheses alter precedence
     assert evaluate("2^3^2") == 64  # Right-associative exponentiation
-    assert evaluate("10%3+2") == 3  # '%' has higher precedence than '+'
+    assert evaluate("10% 3+2") == 3  # '%' has higher precedence than '+'
     assert evaluate("10+2@4") == 13  # '+' has lower precedence than '@'
 
     # Custom precedence tests
