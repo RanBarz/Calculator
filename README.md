@@ -32,8 +32,7 @@ An advanced calculator implementation supporting traditional arithmetic operatio
    ```bash
    git clone https://github.com/RanBarz/Calculator.git
    cd src
-2. Run Main.py
-   python Main.py
+2. Run main.py
 
 ### Usage Example
 1. 5 + 6
