@@ -2,8 +2,6 @@ from Calculator import Calculator
 
 
 def evaluate(expression):
-    """Simulates the advanced calculator by evaluating the expression.
-    Replace this with your actual calculator function."""
     return Calculator.calculate(expression)
 
 
@@ -83,23 +81,22 @@ def test_combined_operators():
 
 def test_precedence_handling():
     # Operators precedence testing
-    assert evaluate("2+3*4") == 14  # '*' has higher precedence than '+'
-    assert evaluate("2*(3+4)") == 14  # Parentheses alter precedence
-    assert evaluate("2^3^2") == 64  # Right-associative exponentiation
-    assert evaluate("10%3+2") == 3  # '%' has higher precedence than '+'
-    assert evaluate("10+2@4") == 13  # '+' has lower precedence than '@'
+    assert evaluate("2+3*4") == 14  
+    assert evaluate("2*(3+4)") == 14  
+    assert evaluate("2^3^2") == 64  
+    assert evaluate("10%3+2") == 3  
+    assert evaluate("10+2@4") == 13 
 
     # Custom precedence tests
-    assert evaluate("(2@4)#") == 3  # '@' before '#'
-    assert evaluate("2+3*4@5") == 15.5  # '*' before '@'
-    assert evaluate("(2$3)+(4&5)") == 7  # '$' and '&' have equal precedence
+    assert evaluate("(2@4)#") == 3  
+    assert evaluate("2+3*4@5") == 15.5  
+    assert evaluate("(2$3)+(4&5)") == 7  
 
 
 def test_unary_minus():
     # Unary minus basic
-    assert evaluate("-1+7") == 6  # Unary minus before addition
-    assert evaluate("-2^3") == -8  # Exponentiation before unary minus
-
+    assert evaluate("-1+7") == 6  
+    assert evaluate("-2^3") == -8  
     # Unary minus with parentheses
     assert evaluate("-(-3)") == 3
     assert evaluate("-(2+3)") == -5
@@ -109,23 +106,23 @@ def test_unary_minus():
     assert evaluate("-(-(-(-2)))") == 2
 
     # Unary minus mixed with binary minus
-    assert evaluate("10--2") == 12  # First binary minus, then unary minus
-    assert evaluate("10---2") == 8  # Binary minus, then unary minus twice
-    assert evaluate("10----2") == 12  # Binary minus, then unary minus thrice
+    assert evaluate("10--2") == 12 
+    assert evaluate("10---2") == 8  
+    assert evaluate("10----2") == 12 
 
     # Complex cases
-    assert evaluate("-2^3+5") == -3  # Unary minus with addition
-    assert evaluate("10+-(2*3)") == 4  # Unary minus with multiplication
-    assert evaluate("10-(-5@3)") == 14  # Unary minus with custom operators
+    assert evaluate("-2^3+5") == -3 
+    assert evaluate("10+-(2*3)") == 4  
+    assert evaluate("10-(-5@3)") == 14 
 
 
 def test_edge_cases():
     # Zero and negative numbers
     assert evaluate("0+0") == 0
     assert evaluate("0@0") == 0
-    assert evaluate("-0") == 0  # Negative zero
-    assert evaluate("0$(-1)") == 0  # Maximum with zero
-    assert evaluate("0&(1)") == 0  # Minimum with zero
+    assert evaluate("-0") == 0  
+    assert evaluate("0$(-1)") == 0  
+    assert evaluate("0&(1)") == 0  
 
     # Complex nested precedence
     assert evaluate("-(2@4)+5$3") == 2
@@ -144,8 +141,8 @@ def test_combined_sum_of_digits():
 
 def test_high_precedence_custom_operators():
     # Verify precedence of custom operators
-    assert evaluate("2@4$5") == 5  # '@' has lower precedence than '$'
-    assert evaluate("(5$3)&2") == 2  # Minimum after maximum
-    assert evaluate("10-(2#*2)") == 6  # Sum of digits before subtraction
-    assert evaluate("-2^2$4") == -16  # Exponentiation before unary minus and maximum
-    assert evaluate("(3*3)#") == 9  # Sum of digits of product
+    assert evaluate("2@4$5") == 5  
+    assert evaluate("(5$3)&2") == 2
+    assert evaluate("10-(2#*2)") == 6 
+    assert evaluate("-2^2$4") == -16  
+    assert evaluate("(3*3)#") == 9  
