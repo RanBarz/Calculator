@@ -1,7 +1,10 @@
-from CalculatorExceptions import IllegalUseOfFactorial, ResultIsTooLarge, RootOfNegative, TooLargeToSumDigits
-from LegalTokens import LegalTokens
+"""A module that include the Number class and its needed constants."""
+from calculator_exceptions import (IllegalUseOfFactorial, ResultIsTooLarge,
+                                   RootOfNegative, TooLargeToSumDigits)
+from legal_tokens import LegalTokens
 
-PRECEDENCE = {'<': 0, "+": 1, "-": 1, "*": 2, "/": 2, '_': 2.5, "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '#': 6}
+PRECEDENCE = {'<': 0, "+": 1, "-": 1, "*": 2, "/": 2, '_': 2.5,
+              "^": 3, "%": 4, "@": 5, "$": 5, "&": 5, '!': 6, '#': 6}
 UNARY_OPERATORS = ['!', '_', '~']
 BINARY_OPERATORS = ["+", "-", "*", "/", "^", "%", "@", "$", "&", "_", "<"]
 RIGHT_UNARY_OPERATORS = ['!', "#"]
@@ -12,12 +15,12 @@ PART_OF_NUMBER_MINUS = '<'
 
 
 class Number:
-
+    """The class that represents a number and includes all the operations for it."""
     def __init__(self, number):
-        self.__number = number
+        self.value = number
 
     def __str__(self):
-        return str(self.__number)
+        return str(self.value)
 
     @classmethod
     def from_string(cls, string_of_number):
@@ -26,38 +29,38 @@ class Number:
 
     def get_value(self):
         """Returns the value of a Number"""
-        return self.__number
+        return self.value
 
     @staticmethod
-    def __mul__(self, other):
+    def mul(self_number, other):
         """Returns the product of two numbers."""
         try:
-            return Number(self.__number * other.get_value())
+            return Number(self_number.value * other.get_value())
         except Exception:
             raise ResultIsTooLarge()
 
     @staticmethod
-    def __truediv__(self, other):
+    def div(self_number, other):
         """Returns the division of two numbers, raises an error if dividing by zero."""
         if other.get_value() == 0:
             raise ZeroDivisionError("This expression includes division by zero, which is illegal.\n"
                                     "Please try again with a correct expression.")
-        return Number(self.__number / other.get_value())
+        return Number(self_number.value / other.get_value())
 
     @staticmethod
-    def __add__(self, other):
+    def add(self_number, other):
         """Returns the sum of two numbers."""
-        return Number(self.__number + other.get_value())
+        return Number(self_number.value + other.get_value())
 
     @staticmethod
-    def __sub__(self, other):
+    def sub(self_number, other):
         """Returns the difference between two numbers."""
-        return Number(self.__number - other.get_value())
+        return Number(self_number.value - other.get_value())
 
     @staticmethod
-    def __pow__(self, other):
+    def power(self_number, other):
         """Returns num1 raised to the power of num2."""
-        float_number = float(self.__number)
+        float_number = float(self_number.value)
         if other.get_value() % 1 != 0 and float_number < 0:
             raise RootOfNegative()
         try:
@@ -66,31 +69,31 @@ class Number:
             raise ResultIsTooLarge()
 
     @staticmethod
-    def __matmul__(self, other):
+    def average(self_number, other):
         """Returns the average of two numbers."""
-        return Number((self.__number + other.get_value()) / 2)
+        return Number((self_number.value + other.get_value()) / 2)
 
     @staticmethod
-    def maximum(self, other):
+    def maximum(self_number, other):
         """Returns the maximum of two numbers."""
-        return Number(max(self.__number, other.get_value()))
+        return Number(max(self_number.value, other.get_value()))
 
     @staticmethod
-    def __and__(self, other):
+    def minimum(self_number, other):
         """Returns the minimum of two numbers."""
-        return Number(min(self.__number, other.get_value()))
+        return Number(min(self_number.value, other.get_value()))
 
     @staticmethod
-    def __mod__(self, other):
+    def modulo(self_number, other):
         """Returns the modulo of two numbers, raises an error if dividing by zero."""
         if other.get_value() == 0:
             raise ZeroDivisionError("Cannot perform modulo by zero.")
-        return Number(self.__number % other.get_value())
+        return Number(self_number.value % other.get_value())
 
     @staticmethod
-    def __invert__(self):
+    def negate(self_number):
         """Returns the negated value of the number."""
-        return Number(-self.__number)
+        return Number(-self_number.value)
 
     @staticmethod
     def factorial_for_int(number):
@@ -103,10 +106,10 @@ class Number:
         return number * Number.factorial_for_int(number - 1)
 
     @staticmethod
-    def factorial(self):
+    def factorial(self_number):
         """Tries using the factorial_for_int method."""
         try:
-            return Number(Number.factorial_for_int(self.__number))
+            return Number(Number.factorial_for_int(self_number.value))
         except Exception as e:
             if isinstance(e, IllegalUseOfFactorial):
                 raise e
@@ -121,10 +124,10 @@ class Number:
         return 0
 
     @staticmethod
-    def sum_digits(self):
+    def sum_digits(self_number):
         """Sums the digits of a number, including decimal numbers."""
         sum_of_digits = 0
-        num = self.__number
+        num = self_number.value
         num *= pow(10.0, Number.count_decimal_digits(num))
         if 'e' in str(num):
             raise TooLargeToSumDigits()
@@ -172,11 +175,11 @@ class Number:
         """
         if Number.is_integer(string):
             return int(string)
-        elif Number.is_float(string):
+        if Number.is_float(string):
             return float(string)
 
 
-OPERATORS = {"+": Number.__add__, "-": Number.__sub__, "*": Number.__mul__, "/": Number.__truediv__,
-             "^": Number.__pow__, "%": Number.__mod__, "@": Number.__matmul__, "$": Number.maximum, "&": Number.__and__,
-             "~": Number.__invert__, "!": Number.factorial, "_": Number.__sub__, "#": Number.sum_digits,
-             "<": Number.__sub__}
+OPERATORS = {"+": Number.add, "-": Number.sub, "*": Number.mul, "/": Number.div,
+             "^": Number.power, "%": Number.modulo, "@": Number.average,
+             "$": Number.maximum, "&": Number.minimum, "~": Number.negate,
+             "!": Number.factorial, "_": Number.sub, "#": Number.sum_digits, "<": Number.sub}
