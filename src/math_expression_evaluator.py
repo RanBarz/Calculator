@@ -1,9 +1,15 @@
-from math import isinf
-from CalculatorExceptions import NoCalculation, NoOperationOnNumber
-from Number import *
+"""A module that includes class MathExpressionEvaluator,
+for evaluating expression."""
+from calculator_exceptions import NoCalculation, NoOperationOnNumber, ResultIsTooLarge
+from number import Number, OPERATORS, RIGHT_UNARY_OPERATORS
 
 
 class MathExpressionEvaluator:
+    """A class that handles the evaluating of a parsed math expression."""
+    @staticmethod
+    def is_inf(value):
+        """Checks if a number is inf."""
+        return value == float('inf') or value == float('-inf')
 
     @staticmethod
     def evaluate(tokens):
@@ -22,9 +28,9 @@ class MathExpressionEvaluator:
                         second_operand = numbers.pop()
                         first_operand = numbers.pop()
                     except Exception:
-                        raise NoCalculation
+                        raise NoCalculation()
                     result = OPERATORS[token](first_operand, second_operand)
-                    if isinf(result.get_value()):
+                    if MathExpressionEvaluator.is_inf(result.get_value()):
                         raise ResultIsTooLarge()
                     numbers.append(result)
         final_result = numbers[0].get_value()
